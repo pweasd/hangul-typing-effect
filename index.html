@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Demo</title>
     <script type="module">
-      import { inputTyping, deleteTyping } from './index.js';
+      import { getCheckedValue, inputTyping, deleteTyping } from './index.js';
+      window.getCheckedValue = getCheckedValue;
       window.inputTyping = inputTyping;
       window.deleteTyping = deleteTyping;
     </script>
@@ -73,6 +74,13 @@
         }
       }
 
+      .radio-area {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 30%;
+        margin-top: 70px;
+      }
       .input-area {
         display: flex;
         justify-content: space-between;
@@ -80,16 +88,55 @@
         width: 30%;
         margin-top: 70px;
       }
+      #input-auto-area {
+        display: block;
+        width: 100%;
+      }
+      #input-button-area {
+        display: none;
+        width: 100%;
+      }
       input {
         width: 100%;
         height: 50px;
         font-size: 20px;
+        box-sizing: border-box;
       }
       button {
         width: 100px;
-        height: 55px;
+        height: 50px;
+        box-sizing: border-box;
       }
     </style>
+    <script type="text/javascript">
+      function resetText() {
+        document.getElementById('output').innerText = '';
+
+        const inputList = document.querySelectorAll('input[type=text]');
+
+        for (let index = 0; index < inputList.length; index++) {
+          const inputItem = inputList[index];
+
+          inputItem.value = '';
+        }
+      }
+
+      function handleRadio() {
+        resetText();
+
+        const checkedValue = getCheckedValue();
+        const inputAutoArea = document.getElementById('input-auto-area');
+        const inputButtonArea = document.getElementById('input-button-area');
+
+        if (checkedValue === 'auto') {
+          inputAutoArea.style.display = 'block';
+          inputButtonArea.style.display = 'none';
+        } else {
+          inputAutoArea.style.display = 'none';
+          inputButtonArea.style.display = 'flex';
+        }
+      }
+    </script>
   </head>
   <body>
     <div class="container">
@@ -97,13 +144,45 @@
         <span id="output"></span>
         <span class="output-cursor"></span>
       </div>
-      <div class="input-area">
+      <div class="radio-area">
         <input
-          type="text"
-          placeholder="Please enter a text"
-          onkeydown="deleteTyping()"
-          onkeyup="inputTyping()"
+          type="radio"
+          id="auto"
+          name="radio"
+          value="auto"
+          onchange="handleRadio(this)"
+          checked
         />
+        Auto
+        <input
+          type="radio"
+          id="button"
+          name="radio"
+          value="button"
+          onchange="handleRadio(this)"
+        />
+        Button
+      </div>
+      <div class="input-area">
+        <div id="input-auto-area">
+          <input
+            id="input-auto"
+            type="text"
+            placeholder="Please enter a text"
+            onkeydown="deleteTyping()"
+            onkeyup="inputTyping()"
+            autocomplete="off"
+          />
+        </div>
+        <div id="input-button-area">
+          <input
+            id="input-button"
+            type="text"
+            placeholder="Please enter a text"
+            autocomplete="off"
+          />
+          <button onclick="inputTyping()">finish</button>
+        </div>
       </div>
     </div>
   </body>

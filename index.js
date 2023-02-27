@@ -12,12 +12,29 @@ function debounce(func, timeout) {
   };
 }
 
-function text() {
-  return document.querySelector('input').value;
+export function getCheckedValue() {
+  const radioList = document.getElementsByName('radio');
+
+  let checkedValue;
+
+  for (let index = 0; index < radioList.length; index++) {
+    const radioItem = radioList[index];
+
+    if (radioItem.checked) {
+      checkedValue = radioItem.value;
+      break;
+    }
+  }
+
+  return checkedValue;
+}
+
+function getText() {
+  return document.getElementById(`${'input-' + getCheckedValue()}`).value;
 }
 
 export const inputTyping = debounce(
-  () => textTyping(element, text(), 100),
+  () => textTyping(element, getText(), 100),
   1000
 );
 
