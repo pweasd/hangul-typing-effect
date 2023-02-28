@@ -1,17 +1,88 @@
 (function () {
   'use strict';
-  const HANGUL_OFFSET = 0xac00;
-  const CHOSEONG_START = 0x1100;
-  const JUNGSEONG_START = 0x1161;
-  const JONGSEONG_START = 0x11a8;
-  const HANGUL_LAST = 11172;
+  const CHO = [
+    'ㄱ',
+    'ㄲ',
+    'ㄴ',
+    'ㄷ',
+    'ㄸ',
+    'ㄹ',
+    'ㅁ',
+    'ㅂ',
+    'ㅃ',
+    'ㅅ',
+    'ㅆ',
+    'ㅇ',
+    'ㅈ',
+    'ㅉ',
+    'ㅊ',
+    'ㅋ',
+    'ㅌ',
+    'ㅍ',
+    'ㅎ',
+  ];
+  const JUNG = [
+    'ㅏ',
+    'ㅐ',
+    'ㅑ',
+    'ㅒ',
+    'ㅓ',
+    'ㅔ',
+    'ㅕ',
+    'ㅖ',
+    'ㅗ',
+    'ㅘ',
+    'ㅙ',
+    'ㅚ',
+    'ㅛ',
+    'ㅜ',
+    'ㅝ',
+    'ㅞ',
+    'ㅟ',
+    'ㅠ',
+    'ㅡ',
+    'ㅢ',
+    'ㅣ',
+  ];
+  const JONG = [
+    '',
+    'ㄱ',
+    'ㄲ',
+    'ㄳ',
+    'ㄴ',
+    'ㄵ',
+    'ㄶ',
+    'ㄷ',
+    'ㄹ',
+    'ㄺ',
+    'ㄻ',
+    'ㄼ',
+    'ㄽ',
+    'ㄾ',
+    'ㄿ',
+    'ㅀ',
+    'ㅁ',
+    'ㅂ',
+    'ㅄ',
+    'ㅅ',
+    'ㅆ',
+    'ㅇ',
+    'ㅈ',
+    'ㅊ',
+    'ㅋ',
+    'ㅌ',
+    'ㅍ',
+    'ㅎ',
+  ];
+  const HANGUL_OFFSET = 44032; // 0xac00;
+  const HANGUL_LAST = 55203;
 
-  function splitText(text) {
+  function split(text) {
     const result = [...text].map((value, i) => {
       const dividedStr = [];
 
       const code = text.charCodeAt(i);
-      if (code < HANGUL_OFFSET || code > HANGUL_OFFSET + HANGUL_LAST) {
+      if (code < HANGUL_OFFSET || code > HANGUL_LAST) {
         return text.charAt(i);
       }
 
@@ -20,37 +91,39 @@
       const jungseong = ((index - jongseong) / 28) % 21;
       const choseong = ((index - jongseong) / 28 - jungseong) / 21;
 
-      dividedStr.push(String.fromCharCode(CHOSEONG_START + choseong));
-      dividedStr.push(String.fromCharCode(JUNGSEONG_START + jungseong));
+      dividedStr.push(CHO[choseong]);
+      dividedStr.push(JUNG[jungseong]);
 
       if (jongseong === 0) {
         dividedStr.push('');
       } else {
-        dividedStr.push(String.fromCharCode(JONGSEONG_START + jongseong - 1));
+        dividedStr.push(JONG[jongseong]);
       }
 
-      const combined = dividedStr.reduce((acc, value, index, str) => {
+      const combined = dividedStr.reduce((acc, value, index) => {
+        // 초성
         if (index === 0) {
           acc.push(value);
           return acc;
         }
 
+        // 초성 + 중성
         if (index === 1) {
           acc.push(
-            String.fromCharCode(str[0].charCodeAt(0), value.charCodeAt(0))
+            String.fromCharCode(HANGUL_OFFSET + choseong * 588 + jungseong * 28)
           );
+
           return acc;
         }
 
+        // 초성 + 중성 + 종성
         if (index === 2) {
           if (value === '') {
             acc.push(value);
           } else {
             acc.push(
               String.fromCharCode(
-                str[0].charCodeAt(0),
-                str[1].charCodeAt(0),
-                value.charCodeAt(0)
+                HANGUL_OFFSET + choseong * 588 + jungseong * 28 + jongseong
               )
             );
           }
@@ -69,7 +142,7 @@
   }
 
   async function typing(element, text, speed) {
-    const splittedText = splitText(text);
+    const splittedText = split(text);
     let remain = '';
     for (let i = 0; i < splittedText.length; i++) {
       const charSet = splittedText[i];
@@ -91,6 +164,7 @@
   }
 
   const hangulTyping = {
+    split: split,
     typing: typing,
   };
 

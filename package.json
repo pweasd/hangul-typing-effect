@@ -1,0 +1,23 @@
+{
+  "name": "hangeul-typing-effect",
+  "version": "1.0.0",
+  "description": "Demo Link: [Demo][https://pweasd.github.io/hangul-typing-effect/]",
+  "main": "hangulTypingEffect.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pweasd/hangul-typing-effect.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pweasd/hangul-typing-effect/issues"
+  },
+  "homepage": "https://github.com/pweasd/hangul-typing-effect#readme",
+  "devDependencies": {
+    "jest": "^29.4.3"
+  }
+}
