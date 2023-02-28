@@ -67,6 +67,13 @@
         }
       }
 
+      .radio-area {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 30%;
+        margin-top: 70px;
+      }
       .input-area {
         display: flex;
         justify-content: space-between;
@@ -74,14 +81,24 @@
         width: 30%;
         margin-top: 70px;
       }
+      #input-auto-area {
+        display: block;
+        width: 100%;
+      }
+      #input-button-area {
+        display: none;
+        width: 100%;
+      }
       input {
         width: 100%;
         height: 50px;
         font-size: 20px;
+        box-sizing: border-box;
       }
       button {
         width: 100px;
-        height: 55px;
+        height: 50px;
+        box-sizing: border-box;
       }
     </style>
   </head>
@@ -91,8 +108,45 @@
         <span id="output"></span>
         <span class="output-cursor"></span>
       </div>
+
+      <div class="radio-area">
+        <input
+          type="radio"
+          id="auto"
+          name="radio"
+          value="auto"
+          onchange="handleRadio(this)"
+          checked
+        />
+        Auto
+        <input
+          type="radio"
+          id="button"
+          name="radio"
+          value="button"
+          onchange="handleRadio(this)"
+        />
+        Button
+      </div>
+
       <div class="input-area">
-        <input type="text" placeholder="Please enter a text" />
+        <div id="input-auto-area">
+          <input
+            id="input-auto"
+            type="text"
+            placeholder="Please enter a text"
+            autocomplete="off"
+          />
+        </div>
+        <div id="input-button-area">
+          <input
+            id="input-button"
+            type="text"
+            placeholder="Please enter a text"
+            autocomplete="off"
+          />
+          <button>Enter</button>
+        </div>
       </div>
     </div>
 
@@ -111,28 +165,79 @@
         };
       }
 
-      const inputElement = document.querySelector('input');
-      const outputElement = document.getElementById('output');
+      function getCheckedValue() {
+        const radioList = document.getElementsByName('radio');
 
-      function text() {
-        return inputElement.value;
+        let checkedValue;
+
+        for (let index = 0; index < radioList.length; index++) {
+          const radioItem = radioList[index];
+
+          if (radioItem.checked) {
+            checkedValue = radioItem.value;
+            break;
+          }
+        }
+
+        return checkedValue;
       }
 
-      inputElement.addEventListener('keyup', (event) => {
+      function getText() {
+        return document.getElementById(`${'input-' + getCheckedValue()}`).value;
+      }
+
+      const inputAutoElement = document.getElementById('input-auto');
+      const outputElement = document.getElementById('output');
+
+      inputAutoElement.addEventListener('keyup', (event) => {
         if (event.keyCode === 8) {
-          outputElement.innerText = text();
+          outputElement.innerText = getText();
         }
       });
 
-      inputElement.addEventListener(
+      inputAutoElement.addEventListener(
         'keydown',
         debounce((event) => {
           if (event.keyCode === 8) {
             return;
           }
-          HangulTyping.typing(outputElement, text(), 100);
+          HangulTyping.typing(outputElement, getText(), 100);
         }, 1000)
       );
+
+      const buttonElement = document.querySelector('button');
+
+      buttonElement.addEventListener('click', () => {
+        HangulTyping.typing(outputElement, getText(), 100);
+      });
+
+      function resetText() {
+        outputElement.innerText = '';
+
+        const inputList = document.querySelectorAll('input[type=text]');
+
+        for (let index = 0; index < inputList.length; index++) {
+          const inputItem = inputList[index];
+
+          inputItem.value = '';
+        }
+      }
+
+      function handleRadio() {
+        resetText();
+
+        const checkedValue = getCheckedValue();
+        const inputAutoArea = document.getElementById('input-auto-area');
+        const inputButtonArea = document.getElementById('input-button-area');
+
+        if (checkedValue === 'auto') {
+          inputAutoArea.style.display = 'block';
+          inputButtonArea.style.display = 'none';
+        } else {
+          inputAutoArea.style.display = 'none';
+          inputButtonArea.style.display = 'flex';
+        }
+      }
     </script>
   </body>
 </html>
