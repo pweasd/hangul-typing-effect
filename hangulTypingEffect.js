@@ -78,18 +78,18 @@
   const HANGUL_LAST = 55203;
 
   function split(text) {
-    const result = [...text].map((value, i) => {
+    const result = [...text].map((char) => {
       const dividedStr = [];
 
-      const code = text.charCodeAt(i);
+      const code = char.charCodeAt(0);
       if (code < HANGUL_OFFSET || code > HANGUL_LAST) {
-        return text.charAt(i);
+        return char;
       }
 
-      const index = code - HANGUL_OFFSET;
-      const jongseong = index % 28;
-      const jungseong = ((index - jongseong) / 28) % 21;
-      const choseong = ((index - jongseong) / 28 - jungseong) / 21;
+      const hangulIndex = code - HANGUL_OFFSET;
+      const jongseong = hangulIndex % 28;
+      const jungseong = ((hangulIndex - jongseong) / 28) % 21;
+      const choseong = ((hangulIndex - jongseong) / 28 - jungseong) / 21;
 
       dividedStr.push(CHO[choseong]);
       dividedStr.push(JUNG[jungseong]);
