@@ -60,3 +60,21 @@ test('split hangul + english sentence', () => {
 
   expect(received).toStrictEqual(expected);
 });
+
+test('split hangul with double consonants', () => {
+  const sentence = `닭장을 나온 암탉`;
+  const received = hangulTyping.split(sentence);
+  const expected = [
+    ['ㄷ', '다', '닭'],
+    ['ㅈ', '자', '장'],
+    ['ㅇ', '으', '을'],
+    ' ',
+    ['ㄴ', '나', ''],
+    ['ㅇ', '오', '온'],
+    ' ',
+    ['ㅇ', '아', '암'],
+    ['ㅌ', '타', '탉'],
+  ];
+
+  expect(received).toStrictEqual(expected);
+});
